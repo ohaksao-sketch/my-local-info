@@ -1,0 +1,61 @@
+{
+  "events": [
+    {
+      "id": "event-1",
+      "name": "성남시 봄꽃 축제",
+      "category": "행사",
+      "startDate": "4월 5일",
+      "endDate": "4월 13일",
+      "location": "중앙공원",
+      "target": "전연령",
+      "summary": "성남의 아름다운 봄꽃과 함께하는 축제입니다. 가족, 연인과 함께 벚꽃 구경 오세요!",
+      "link": "https://www.seongnam.go.kr/tour/sub/sub04_01_01.do"
+    },
+    {
+      "id": "event-2",
+      "name": "판교 청년 창업 박람회",
+      "category": "행사",
+      "startDate": "4월 19일",
+      "endDate": "4월 20일",
+      "location": "판교 테크노벨리",
+      "target": "청년",
+      "summary": "창업을 꿈꾸는 청년들을 위한 정보 공유의 장! 다양한 창업 상담과 네트워킹 기회를 제공합니다.",
+      "link": "https://dept.seongnam.go.kr/youth/main/main.do"
+    },
+    {
+      "id": "event-3",
+      "name": "성남시 어린이날 큰잔치",
+      "category": "행사",
+      "startDate": "5월 5일",
+      "endDate": "5월 5일",
+      "location": "성남종합운동장",
+      "target": "어린이/가족",
+      "summary": "어린이날을 맞아 온 가족이 함께 즐길 수 있는 체험 활동과 공연이 펼쳐집니다.",
+      "link": "https://www.seongnam.go.kr/tour/sub/sub04_01_02.do"
+    }
+  ],
+  "benefits": [
+    {
+      "id": "benefit-1",
+      "name": "성남시 청년 월세 지원금",
+      "category": "혜택",
+      "startDate": "-",
+      "endDate": "-",
+      "location": "성남시",
+      "target": "만 19~34세",
+      "summary": "성남시에 거주하는 무주택 청년들에게 월 최대 20만원의 월세를 지원해 드립니다.",
+      "link": "https://dept.seongnam.go.kr/youth/sub/sub03_03.do"
+    },
+    {
+      "id": "benefit-2",
+      "name": "경기도 출산지원금",
+      "category": "혜택",
+      "startDate": "-",
+      "endDate": "-",
+      "location": "경기도",
+      "target": "출산 가정",
+      "summary": "도내 출산 가정을 대상으로 첫째아 100만원, 둘째아 이상 150만원을 지원합니다.",
+      "link": "https://www.gg.go.kr/contents/contents.do?ciIdx=1534&menuId=3343"
+    }
+  ]
+}

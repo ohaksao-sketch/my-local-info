@@ -1,65 +1,115 @@
-import Image from "next/image";
+import React from 'react';
+import Link from 'next/link';
 
-export default function Home() {
+interface InfoItem {
+  id: string;
+  name: string;
+  category: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  target: string;
+  summary: string;
+  link: string;
+}
+
+const InfoCard = ({ item }: { item: InfoItem }) => (
+  <div className="bg-white rounded-2xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow duration-300">
+    <div className="flex justify-between items-start mb-4">
+      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+        item.category === '행사' ? 'bg-orange-100 text-orange-600' : 'bg-rose-100 text-rose-600'
+      }`}>
+        {item.category}
+      </span>
+      {item.startDate !== '-' && (
+        <span className="text-sm text-gray-500 font-medium">
+          {item.startDate} {item.endDate !== item.startDate && `~ ${item.endDate}`}
+        </span>
+      )}
+    </div>
+    <h3 className="text-xl font-bold text-gray-800 mb-2 leading-tight">{item.name}</h3>
+    <div className="space-y-2 mb-4">
+      <p className="text-sm text-gray-600">
+        <span className="font-semibold text-gray-800">장소:</span> {item.location}
+      </p>
+      <p className="text-sm text-gray-600">
+        <span className="font-semibold text-gray-800">대상:</span> {item.target}
+      </p>
+      <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">{item.summary}</p>
+    </div>
+    <Link
+      href={`/details/${item.id}`}
+      className="inline-block text-orange-500 font-bold text-sm hover:underline"
+    >
+      자세히 보기 →
+    </Link>
+  </div>
+);
+
+import data from '../../public/data/local-info.json';
+
+export default async function Home() {
+  // 샘플 데이터 직접 정의 대신 JSON 파일을 사용합니다.
+  const { events, benefits } = data;
+
+  const today = new Date().toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen bg-orange-50 font-sans text-gray-900">
+      {/* 1. 상단 헤더 */}
+      <header className="bg-white border-b border-orange-100 py-8 px-4 text-center sticky top-0 z-10 shadow-sm">
+        <h1 className="text-3xl md:text-4xl font-black text-orange-600 tracking-tight">
+          🏘️ 성남시 생활 정보
+        </h1>
+        <p className="mt-2 text-gray-500 font-medium">우리 동네 소식을 한눈에 확인하세요</p>
+      </header>
+
+      <main className="max-w-6xl mx-auto px-4 py-12 space-y-16">
+        {/* 2. 이번 달 행사/축제 */}
+        <section>
+          <div className="flex items-center gap-2 mb-8 border-l-4 border-orange-500 pl-4">
+            <h2 className="text-2xl font-black text-gray-800">🌸 이번 달 행사/축제</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.events.map((event, idx) => (
+              <InfoCard key={idx} item={event} />
+            ))}
+          </div>
+        </section>
+
+        {/* 3. 지원금/혜택 정보 */}
+        <section>
+          <div className="flex items-center gap-2 mb-8 border-l-4 border-rose-500 pl-4">
+            <h2 className="text-2xl font-black text-gray-800">💰 지원금/혜택 정보</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.benefits.map((benefit, idx) => (
+              <InfoCard key={idx} item={benefit} />
+            ))}
+          </div>
+        </section>
       </main>
+
+      {/* 4. 하단 푸터 */}
+      <footer className="bg-white border-t border-orange-100 py-12 px-4 text-center mt-20">
+        <div className="max-w-4xl mx-auto space-y-4">
+          <p className="text-gray-500 text-sm font-medium">
+            데이터 출처: <span className="text-orange-600 font-bold">공공데이터포털 (data.go.kr)</span>
+          </p>
+          <p className="text-gray-400 text-xs">
+            마지막 업데이트: {today}
+          </p>
+          <div className="pt-6 border-t border-gray-100">
+            <p className="text-gray-300 text-xs tracking-widest uppercase">
+              &copy; 2024 우리 동네 생활 정보. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
