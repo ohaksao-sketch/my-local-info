@@ -22,6 +22,9 @@ const PUBLIC_DATA_URL = 'https://api.odcloud.kr/api/gov24/v3/serviceList';
 const GEMINI_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
+// 경기북부 대상 도시
+const TARGET_CITIES = ['의정부', '양주', '동두천', '포천'];
+
 function loadLocalInfo() {
   try {
     return JSON.parse(fs.readFileSync(OUTPUT_PATH, 'utf-8'));
@@ -40,34 +43,59 @@ function containsKeyword(item, keyword) {
   return fields.some((v) => typeof v === 'string' && v.includes(keyword));
 }
 
-async function fetchPublicData() {
-  if (!PUBLIC_DATA_API_KEY) {
-    throw new Error('PUBLIC_DATA_API_KEY 환경변수가 설정되지 않았습니다.');
-  }
-
+async function fetchByCondition(condKey, condValue, perPage = 20) {
   const url = new URL(PUBLIC_DATA_URL);
   url.searchParams.set('serviceKey', PUBLIC_DATA_API_KEY);
   url.searchParams.set('page', '1');
-  url.searchParams.set('perPage', '20');
+  url.searchParams.set('perPage', String(perPage));
   url.searchParams.set('returnType', 'JSON');
+  if (condKey && condValue) {
+    url.searchParams.set(condKey, condValue);
+  }
 
   const res = await fetch(url.toString());
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`공공데이터 API 오류: ${res.status} - ${body.slice(0, 200)}`);
   }
-
   const json = await res.json();
   return Array.isArray(json?.data) ? json.data : [];
 }
 
+function dedupeByServiceId(items) {
+  const seen = new Set();
+  const result = [];
+  for (const item of items) {
+    const id = item['서비스ID'];
+    if (id && !seen.has(id)) {
+      seen.add(id);
+      result.push(item);
+    }
+  }
+  return result;
+}
+
+async function fetchPublicData() {
+  if (!PUBLIC_DATA_API_KEY) {
+    throw new Error('PUBLIC_DATA_API_KEY 환경변수가 설정되지 않았습니다.');
+  }
+
+  // 각 대상 도시별로 소관기관명 LIKE 필터로 호출 후 병합
+  const all = [];
+  for (const city of TARGET_CITIES) {
+    try {
+      const items = await fetchByCondition('cond[소관기관명::LIKE]', city, 20);
+      console.log(`[fetch-public-data] ${city}: ${items.length}건 수신`);
+      all.push(...items);
+    } catch (err) {
+      console.error(`[fetch-public-data] ${city} 조회 실패:`, err.message);
+    }
+  }
+  return dedupeByServiceId(all);
+}
+
 function filterByPriority(allItems) {
-  const seongnam = allItems.filter((it) => containsKeyword(it, '성남'));
-  if (seongnam.length > 0) return seongnam;
-
-  const gyeonggi = allItems.filter((it) => containsKeyword(it, '경기'));
-  if (gyeonggi.length > 0) return gyeonggi;
-
+  // fetchPublicData가 이미 대상 도시로 필터링했으므로 그대로 반환
   return allItems;
 }
 
@@ -130,6 +158,36 @@ function buildServiceLink(rawItem) {
   }
 
   return 'https://www.gov.kr';
+}
+
+/**
+ * Gemini 없이 원본 API 필드를 직접 매핑해서 목표 형식으로 변환.
+ * Gemini API 할당량 초과/장애 시 fallback으로 사용.
+ */
+function mapDirectly(rawItem) {
+  const today = new Date().toISOString().slice(0, 10);
+  const supportType = rawItem['지원유형'] || '';
+
+  // 지원유형에 "행사"/"축제" 키워드가 있으면 행사, 아니면 혜택
+  const category =
+    /행사|축제|대회|공연/.test(supportType) ||
+    /행사|축제|대회|공연/.test(rawItem['서비스명'] || '')
+      ? '행사'
+      : '혜택';
+
+  const deadline = rawItem['신청기한'] || '';
+  const isAlways = /상시|수시|연중/.test(deadline);
+
+  return {
+    id: rawItem['서비스ID'] || String(Date.now()),
+    name: rawItem['서비스명'] || '제목 없음',
+    category,
+    startDate: today,
+    endDate: isAlways ? '상시' : (deadline || '상시'),
+    location: rawItem['소관기관명'] || '경기북부',
+    target: (rawItem['지원대상'] || '해당자').slice(0, 100),
+    summary: (rawItem['서비스목적요약'] || rawItem['서비스명'] || '').slice(0, 200),
+  };
 }
 
 async function processWithGemini(rawItem) {
@@ -196,9 +254,14 @@ async function main() {
     const chosen = candidates[0];
     console.log(`[fetch-public-data] 신규 1건 선정: ${chosen['서비스명']}`);
 
-    newItem = await processWithGemini(chosen);
+    try {
+      newItem = await processWithGemini(chosen);
+    } catch (geminiErr) {
+      console.warn('[fetch-public-data] Gemini 실패, 직접 매핑으로 fallback:', geminiErr.message);
+      newItem = mapDirectly(chosen);
+    }
 
-    // Gemini가 link를 임의 생성하지 못하도록, 원본 데이터 기반으로 직접 조립
+    // link는 원본 데이터 기반으로 직접 조립
     newItem.link = buildServiceLink(chosen);
   } catch (err) {
     console.error('[fetch-public-data] 오류:', err.message);

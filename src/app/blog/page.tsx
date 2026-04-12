@@ -9,10 +9,10 @@ export default function BlogListPage() {
     <div className="min-h-screen bg-orange-50 font-sans text-gray-900 pb-20">
       <header className="bg-white border-b border-orange-100 py-12 px-4 text-center mb-12">
         <h1 className="text-3xl md:text-4xl font-black text-orange-600 tracking-tight">
-          📝 성남 생활 정보 블로그
+          📝 경기북부지원포탈 블로그
         </h1>
         <p className="mt-2 text-gray-500 font-medium italic">
-          AI가 전해드리는 생생한 지역 소식
+          의정부·양주·동두천·포천 지역 소식을 AI가 전해드립니다
         </p>
       </header>
 

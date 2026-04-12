@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "성남시 우리 동네 생활 정보",
-  description: "성남시의 최신 행사, 지원금, 혜택 정보를 한눈에 확인하고 AI가 추천하는 블로그 글을 만나보세요.",
+  title: "경기북부지원포탈",
+  description: "의정부·양주·동두천·포천 등 경기북부 지역의 최신 행사, 지원금, 혜택 정보를 한눈에 확인하고 AI가 작성한 블로그 글을 만나보세요.",
 };
 
 export default function RootLayout({
@@ -32,7 +32,7 @@ export default function RootLayout({
         <nav className="bg-white border-b border-orange-100 sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
             <Link href="/" className="text-xl font-black text-orange-600 flex items-center gap-2">
-              🏘️ <span className="hidden sm:inline">성남 생활 정보</span>
+              🏘️ <span className="hidden sm:inline">경기북부지원포탈</span>
             </Link>
             <div className="flex gap-6">
               <Link href="/" className="font-bold text-gray-600 hover:text-orange-500 transition-colors">홈</Link>

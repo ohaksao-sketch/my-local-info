@@ -55,9 +55,9 @@ export default async function Home() {
       {/* 1. 상단 헤더 */}
       <header className="bg-white border-b border-orange-100 py-8 px-4 text-center sticky top-0 z-10 shadow-sm">
         <h1 className="text-3xl md:text-4xl font-black text-orange-600 tracking-tight">
-          🏘️ 성남시 생활 정보
+          🏘️ 경기북부지원포탈
         </h1>
-        <p className="mt-2 text-gray-500 font-medium">우리 동네 소식을 한눈에 확인하세요</p>
+        <p className="mt-2 text-gray-500 font-medium">의정부·양주·동두천·포천 생활 정보를 한눈에</p>
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-12 space-y-16">
@@ -94,7 +94,7 @@ export default async function Home() {
           </p>
           <div className="pt-6 border-t border-gray-100 space-y-2">
             <p className="text-orange-600 text-base font-black">
-              🏡 ohaksao의 성남 생활 정보 사이트
+              🏡 ohaksao의 경기북부지원포탈
             </p>
             <p className="text-gray-500 text-xs">
               Made by <span className="font-bold text-gray-700">ohaksao</span> ·{' '}
