@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import data from '../../public/data/local-info.json';
 
 interface InfoItem {
   id: string;
@@ -38,7 +39,7 @@ const InfoCard = ({ item }: { item: InfoItem }) => (
       <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">{item.summary}</p>
     </div>
     <Link
-      href={`/details/${item.id}`}
+      href="/blog"
       className="inline-block text-orange-500 font-bold text-sm hover:underline"
     >
       자세히 보기 →
@@ -46,17 +47,8 @@ const InfoCard = ({ item }: { item: InfoItem }) => (
   </div>
 );
 
-import data from '../../public/data/local-info.json';
-
 export default async function Home() {
-  // 샘플 데이터 직접 정의 대신 JSON 파일을 사용합니다.
   const { events, benefits } = data;
-
-  const today = new Date().toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
 
   return (
     <div className="min-h-screen bg-orange-50 font-sans text-gray-900">
@@ -75,7 +67,7 @@ export default async function Home() {
             <h2 className="text-2xl font-black text-gray-800">🌸 이번 달 행사/축제</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.events.map((event, idx) => (
+            {events.map((event, idx) => (
               <InfoCard key={idx} item={event} />
             ))}
           </div>
@@ -87,7 +79,7 @@ export default async function Home() {
             <h2 className="text-2xl font-black text-gray-800">💰 지원금/혜택 정보</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.benefits.map((benefit, idx) => (
+            {benefits.map((benefit, idx) => (
               <InfoCard key={idx} item={benefit} />
             ))}
           </div>
@@ -100,12 +92,23 @@ export default async function Home() {
           <p className="text-gray-500 text-sm font-medium">
             데이터 출처: <span className="text-orange-600 font-bold">공공데이터포털 (data.go.kr)</span>
           </p>
-          <p className="text-gray-400 text-xs">
-            마지막 업데이트: {today}
-          </p>
-          <div className="pt-6 border-t border-gray-100">
+          <div className="pt-6 border-t border-gray-100 space-y-2">
+            <p className="text-orange-600 text-base font-black">
+              🏡 ohaksao의 성남 생활 정보 사이트
+            </p>
+            <p className="text-gray-500 text-xs">
+              Made by <span className="font-bold text-gray-700">ohaksao</span> ·{' '}
+              <a
+                href="https://github.com/ohaksao-sketch/my-local-info"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-orange-500 hover:underline"
+              >
+                github.com/ohaksao-sketch
+              </a>
+            </p>
             <p className="text-gray-300 text-xs tracking-widest uppercase">
-              &copy; 2024 우리 동네 생활 정보. All rights reserved.
+              &copy; 2026 ohaksao. All rights reserved.
             </p>
           </div>
         </div>

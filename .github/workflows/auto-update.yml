@@ -1,0 +1,66 @@
+name: 매일 자동 데이터 수집 및 배포
+
+on:
+  schedule:
+    # 매일 오전 7시 (한국시간 = UTC+9, 즉 UTC 22:00 전날)
+    - cron: '0 22 * * *'
+  workflow_dispatch: # 수동 실행 허용
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 공공데이터 수집
+        env:
+          PUBLIC_DATA_API_KEY: ${{ secrets.PUBLIC_DATA_API_KEY }}
+        run: node scripts/fetch-data.js
+
+      - name: 블로그 글 자동 생성
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -f "scripts/generate-blog.js" ]; then
+            node scripts/generate-blog.js
+          else
+            echo "generate-blog.js 아직 없음, 스킵"
+          fi
+
+      - name: 변경사항 확인
+        id: check_changes
+        run: |
+          git diff --quiet public/data/ || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: 변경사항 커밋
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/
+          git commit -m "chore: 자동 데이터 업데이트 $(date +'%Y-%m-%d')"
+          git push
+
+      - name: Next.js 빌드
+        env:
+          NEXT_PUBLIC_ADSENSE_ID: ${{ secrets.NEXT_PUBLIC_ADSENSE_ID }}
+          NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
+        run: npm run build
+
+      - name: Cloudflare Pages 배포
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy out --project-name=my-local-info
