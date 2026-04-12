@@ -106,6 +106,19 @@ function extractJson(text) {
   }
 }
 
+/**
+ * 원본 공공데이터 항목에서 안전한 상세 URL 생성.
+ * 원본 API의 `상세조회URL` 필드는 죽은 링크인 경우가 있어서
+ * 서비스명 기반 정부24 검색 URL을 사용한다.
+ */
+function buildServiceLink(rawItem) {
+  const serviceName = rawItem['서비스명'];
+  if (typeof serviceName === 'string' && serviceName.length > 0) {
+    return `https://www.gov.kr/search/applyMw?query=${encodeURIComponent(serviceName)}`;
+  }
+  return 'https://www.gov.kr';
+}
+
 async function processWithGemini(rawItem) {
   if (!GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY 환경변수가 설정되지 않았습니다.');
@@ -114,9 +127,10 @@ async function processWithGemini(rawItem) {
   const today = new Date().toISOString().slice(0, 10);
 
   const prompt = `아래 공공데이터 1건을 분석해서 JSON 객체로 변환해줘. 형식:
-{id: 숫자, name: 서비스명, category: '행사' 또는 '혜택', startDate: 'YYYY-MM-DD', endDate: 'YYYY-MM-DD', location: 장소 또는 기관명, target: 지원대상, summary: 한줄요약, link: 상세URL}
+{id: 숫자, name: 서비스명, category: '행사' 또는 '혜택', startDate: 'YYYY-MM-DD', endDate: 'YYYY-MM-DD', location: 장소 또는 기관명, target: 지원대상, summary: 한줄요약}
 category는 내용을 보고 행사/축제면 '행사', 지원금/서비스면 '혜택'으로 판단해.
 startDate가 없으면 오늘 날짜(${today}), endDate가 없으면 '상시'로 넣어.
+link 필드는 넣지 마. 링크는 스크립트에서 직접 조립해.
 반드시 JSON 객체만 출력해. 다른 텍스트 없이.
 
 [원본 데이터]
@@ -170,6 +184,9 @@ async function main() {
     console.log(`[fetch-public-data] 신규 1건 선정: ${chosen['서비스명']}`);
 
     newItem = await processWithGemini(chosen);
+
+    // Gemini가 link를 임의 생성하지 못하도록, 원본 데이터 기반으로 직접 조립
+    newItem.link = buildServiceLink(chosen);
   } catch (err) {
     console.error('[fetch-public-data] 오류:', err.message);
     console.error('[fetch-public-data] 기존 local-info.json을 유지합니다.');

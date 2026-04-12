@@ -261,10 +261,10 @@
       "category": "혜택",
       "startDate": "2026-03-01",
       "endDate": "2027-02-28",
-      "location": "복지로 복지사업서비스 및 읍면동 주민센터",
-      "target": "국공립 및 사립유치원에 다니는 3~5세 유아",
+      "location": "온라인 (복지로) 및 읍면동 주민센터",
+      "target": "국공립 및 사립유치원에 다니는 만 3~5세 유아 (저소득층 추가지원)",
       "summary": "유치원에 다니는 3~5세 아동에게 유아학비, 방과후과정비 등 지원",
-      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/000000465790"
+      "link": "https://www.gov.kr/search/applyMw?query=%EC%9C%A0%EC%95%84%ED%95%99%EB%B9%84%20(%EB%88%84%EB%A6%AC%EA%B3%BC%EC%A0%95)%20%EC%A7%80%EC%9B%90"
     }
   ]
 }
