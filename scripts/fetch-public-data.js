@@ -107,15 +107,28 @@ function extractJson(text) {
 }
 
 /**
- * 원본 공공데이터 항목에서 안전한 상세 URL 생성.
- * 원본 API의 `상세조회URL` 필드는 죽은 링크인 경우가 있어서
- * 서비스명 기반 정부24 검색 URL을 사용한다.
+ * 원본 공공데이터 항목에서 상세 URL 조립.
+ * 우선순위:
+ *   1. 원본 API의 `상세조회URL` 필드 (정부24 보조금24 서비스 상세 페이지)
+ *   2. 서비스ID 기반 정부24 URL 직접 조립
+ *   3. 네이버 검색 URL (마지막 안전장치)
  */
 function buildServiceLink(rawItem) {
+  const directUrl = rawItem['상세조회URL'];
+  if (typeof directUrl === 'string' && /^https?:\/\//.test(directUrl.trim())) {
+    return directUrl.trim();
+  }
+
+  const serviceId = rawItem['서비스ID'];
+  if (typeof serviceId === 'string' && serviceId.length > 0) {
+    return `https://www.gov.kr/portal/rcvfvrSvc/dtlEx/${serviceId}`;
+  }
+
   const serviceName = rawItem['서비스명'];
   if (typeof serviceName === 'string' && serviceName.length > 0) {
-    return `https://www.gov.kr/search/applyMw?query=${encodeURIComponent(serviceName)}`;
+    return `https://search.naver.com/search.naver?query=${encodeURIComponent(serviceName + ' 정부24')}`;
   }
+
   return 'https://www.gov.kr';
 }
 
