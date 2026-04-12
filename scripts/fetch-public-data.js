@@ -23,7 +23,10 @@ const GEMINI_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 // 경기북부 대상 도시
-const TARGET_CITIES = ['의정부', '양주', '동두천', '포천'];
+const TARGET_CITIES = ['의정부', '양주', '동두천', '포천', '남양주'];
+
+// 행사/축제 검색 키워드
+const EVENT_KEYWORDS = ['축제', '행사', '공연', '문화행사', '체험행사'];
 
 function loadLocalInfo() {
   try {
@@ -80,22 +83,39 @@ async function fetchPublicData() {
     throw new Error('PUBLIC_DATA_API_KEY 환경변수가 설정되지 않았습니다.');
   }
 
-  // 각 대상 도시별로 소관기관명 LIKE 필터로 호출 후 병합
   const all = [];
+
+  // 1) 도시별 기관명 검색 (지원금/혜택 위주)
   for (const city of TARGET_CITIES) {
     try {
       const items = await fetchByCondition('cond[소관기관명::LIKE]', city, 20);
-      console.log(`[fetch-public-data] ${city}: ${items.length}건 수신`);
+      console.log(`[fetch-public-data] 기관명(${city}): ${items.length}건 수신`);
       all.push(...items);
     } catch (err) {
       console.error(`[fetch-public-data] ${city} 조회 실패:`, err.message);
     }
   }
+
+  // 2) 행사/축제 키워드 검색 (서비스명 기준)
+  for (const keyword of EVENT_KEYWORDS) {
+    try {
+      const items = await fetchByCondition('cond[서비스명::LIKE]', keyword, 20);
+      // 경기북부 관련 항목만 필터
+      const filtered = items.filter((item) => {
+        const org = item['소관기관명'] || '';
+        return TARGET_CITIES.some((city) => org.includes(city));
+      });
+      console.log(`[fetch-public-data] 키워드(${keyword}): ${items.length}건 중 ${filtered.length}건 경기북부`);
+      all.push(...filtered);
+    } catch (err) {
+      console.error(`[fetch-public-data] 키워드(${keyword}) 조회 실패:`, err.message);
+    }
+  }
+
   return dedupeByServiceId(all);
 }
 
 function filterByPriority(allItems) {
-  // fetchPublicData가 이미 대상 도시로 필터링했으므로 그대로 반환
   return allItems;
 }
 
