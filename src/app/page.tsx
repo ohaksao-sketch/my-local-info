@@ -3,7 +3,7 @@ import Link from 'next/link';
 import data from '../../public/data/local-info.json';
 
 interface InfoItem {
-  id: string;
+  id: string | number;
   name: string;
   category: string;
   startDate: string;
