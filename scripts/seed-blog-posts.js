@@ -1,7 +1,7 @@
 /**
- * 일회성 스크립트: local-info.json의 모든 항목에 대해
- * 공공데이터포털 API에서 원본 데이터를 재수집하고
- * 팩트 기반 마크다운 블로그 글을 생성한다.
+ * 일회성 스크립트: local-info.json 모든 항목에 대해
+ * 공공데이터포털 원본 데이터를 재수집하고,
+ * 팩트 기반이되 읽히는 블로그 형식으로 마크다운을 생성한다.
  *
  * 실행: node --env-file=.env.local scripts/seed-blog-posts.js
  */
@@ -14,7 +14,6 @@ const path = require('path');
 const API_KEY = process.env.PUBLIC_DATA_API_KEY;
 const LOCAL_INFO_PATH = path.join(process.cwd(), 'public/data/local-info.json');
 const POSTS_DIR = path.join(process.cwd(), 'src/content/posts');
-
 const API_URL = 'https://api.odcloud.kr/api/gov24/v3/serviceList';
 
 async function fetchById(serviceId) {
@@ -26,10 +25,7 @@ async function fetchById(serviceId) {
   url.searchParams.set('cond[서비스ID::EQ]', serviceId);
 
   const res = await fetch(url.toString());
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`API 오류 ${res.status}: ${body.slice(0, 150)}`);
-  }
+  if (!res.ok) throw new Error(`API ${res.status}`);
   const json = await res.json();
   return Array.isArray(json?.data) && json.data.length > 0 ? json.data[0] : null;
 }
@@ -39,119 +35,141 @@ function sanitize(text) {
   return text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
 }
 
-function toEnglishSlug(koreanName) {
-  // 간단한 영문 slug 생성: 서비스ID 기반
-  return '';
-}
-
-function generateMarkdown(rawItem, today) {
-  const name = sanitize(rawItem['서비스명']) || '공공서비스';
-  const purpose = sanitize(rawItem['서비스목적요약']);
-  const target = sanitize(rawItem['지원대상']);
-  const content = sanitize(rawItem['지원내용']);
-  const criteria = sanitize(rawItem['선정기준']);
-  const method = sanitize(rawItem['신청방법']);
-  const deadline = sanitize(rawItem['신청기한']);
-  const agency = sanitize(rawItem['소관기관명']);
-  const dept = sanitize(rawItem['부서명']);
-  const phone = sanitize(rawItem['전화문의']);
-  const receiveAgency = sanitize(rawItem['접수기관']);
-  const category_field = sanitize(rawItem['서비스분야']);
-  const supportType = sanitize(rawItem['지원유형']);
-  const serviceId = sanitize(rawItem['서비스ID']);
-
-  // 태그 생성 (기관명에서 도시 추출)
-  const cityMatch = agency.match(/(의정부시|양주시|동두천시|포천시|남양주시)/);
-  const city = cityMatch ? cityMatch[1] : '경기북부';
-  const tags = [city, category_field || '생활정보', supportType || '지원'].filter(Boolean);
-
-  // frontmatter용 한줄 요약 (따옴표 이스케이프)
-  const summary = purpose.split('\n')[0].replace(/"/g, '\\"').slice(0, 150) || name;
-  const escapedTitle = name.replace(/"/g, '\\"');
-
-  let body = '';
-  body += `---\n`;
-  body += `title: "${escapedTitle}"\n`;
-  body += `date: ${today}\n`;
-  body += `summary: "${summary}"\n`;
-  body += `category: 정보\n`;
-  body += `tags: [${tags.map((t) => t.replace(/,/g, '')).join(', ')}]\n`;
-  body += `---\n\n`;
-
-  body += `## 어떤 제도인가요?\n\n`;
-  body += `${purpose || name}\n\n`;
-
-  if (agency || dept) {
-    body += `**담당 기관:** ${[agency, dept].filter(Boolean).join(' / ')}\n\n`;
-  }
-
-  if (target) {
-    body += `## 지원 대상\n\n`;
-    body += formatMultiline(target) + '\n\n';
-  }
-
-  if (content) {
-    body += `## 지원 내용\n\n`;
-    body += formatMultiline(content) + '\n\n';
-  }
-
-  if (criteria) {
-    body += `## 선정 기준\n\n`;
-    body += formatMultiline(criteria) + '\n\n';
-  }
-
-  if (method || receiveAgency) {
-    body += `## 신청 방법\n\n`;
-    if (method) body += formatMultiline(method) + '\n\n';
-    if (receiveAgency) body += `**접수 기관:** ${receiveAgency}\n\n`;
-  }
-
-  if (deadline) {
-    body += `## 신청 기한\n\n`;
-    body += `${deadline}\n\n`;
-  }
-
-  if (phone) {
-    body += `## 문의\n\n`;
-    body += `☎️ ${phone}\n\n`;
-  }
-
-  body += `---\n\n`;
-  body += `> 📌 이 글은 공공데이터포털(정부24)에서 제공하는 원본 데이터를 바탕으로 작성되었습니다.\n`;
-  body += `> 자세한 사항과 최신 정보는 반드시 **담당 기관 공식 공고** 또는 **정부24 상세 페이지**를 확인해 주세요.\n`;
-
-  return { body, serviceId };
-}
-
-function formatMultiline(text) {
-  // 멀티라인 텍스트를 마크다운 리스트 또는 문단으로 변환
+function formatAsList(text) {
+  if (!text) return '';
   const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
   if (lines.length === 0) return '';
-
-  // 한 줄이면 그대로 반환
   if (lines.length === 1) return lines[0];
-
-  // 여러 줄이면 마크다운 리스트로
   return lines
     .map((l) => {
-      // 이미 리스트 마커(○, -, •, ※, ①②③ 등)가 있으면 "-"로 통일
-      const cleaned = l.replace(/^[○•※①②③④⑤⑥⑦⑧⑨⑩\-*·]+\s*/, '').trim();
+      const cleaned = l.replace(/^[○•※①②③④⑤⑥⑦⑧⑨⑩\-*·▶◆►◎□■]+\s*/, '').trim();
       return `- ${cleaned}`;
     })
     .join('\n');
 }
 
-function buildFilename(today, rawItem, index) {
-  const serviceId = rawItem['서비스ID'] || `item-${index}`;
-  const cityMatch = (rawItem['소관기관명'] || '').match(/(uijeongbu|yangju|dongducheon|pocheon|namyangju)/i);
-  let cityEn = 'gyeonggi';
-  const agency = rawItem['소관기관명'] || '';
-  if (agency.includes('의정부')) cityEn = 'uijeongbu';
-  else if (agency.includes('남양주')) cityEn = 'namyangju';
-  else if (agency.includes('양주')) cityEn = 'yangju';
-  else if (agency.includes('동두천')) cityEn = 'dongducheon';
-  else if (agency.includes('포천')) cityEn = 'pocheon';
-  return `${today}-${cityEn}-${serviceId}.md`;
+function detectCity(agency) {
+  if (!agency) return null;
+  if (agency.includes('의정부')) return { ko: '의정부시', en: 'uijeongbu' };
+  if (agency.includes('남양주')) return { ko: '남양주시', en: 'namyangju' };
+  if (agency.includes('양주')) return { ko: '양주시', en: 'yangju' };
+  if (agency.includes('동두천')) return { ko: '동두천시', en: 'dongducheon' };
+  if (agency.includes('포천')) return { ko: '포천시', en: 'pocheon' };
+  return null;
+}
+
+function generateMarkdown(raw, today) {
+  const name = sanitize(raw['서비스명']) || '공공서비스';
+  const purpose = sanitize(raw['서비스목적요약']);
+  const target = sanitize(raw['지원대상']);
+  const content = sanitize(raw['지원내용']);
+  const criteria = sanitize(raw['선정기준']);
+  const method = sanitize(raw['신청방법']);
+  const deadline = sanitize(raw['신청기한']) || '공고 참조';
+  const agency = sanitize(raw['소관기관명']);
+  const dept = sanitize(raw['부서명']);
+  const phone = sanitize(raw['전화문의']);
+  const receiveAgency = sanitize(raw['접수기관']);
+  const serviceField = sanitize(raw['서비스분야']);
+  const supportType = sanitize(raw['지원유형']);
+  const sourceUrl = sanitize(raw['상세조회URL']);
+  const serviceId = sanitize(raw['서비스ID']);
+
+  const city = detectCity(agency) || { ko: '경기북부', en: 'gyeonggi' };
+
+  const tags = [city.ko, serviceField, supportType].filter(Boolean);
+
+  // 한 줄 요약 (frontmatter용)
+  const summaryLine = (purpose || name).split('\n')[0].replace(/"/g, '\\"').slice(0, 150);
+  const escapedTitle = name.replace(/"/g, '\\"');
+
+  let md = '';
+  md += `---\n`;
+  md += `title: "${escapedTitle}"\n`;
+  md += `date: ${today}\n`;
+  md += `summary: "${summaryLine}"\n`;
+  md += `category: 정보\n`;
+  md += `tags: [${tags.map((t) => t.replace(/,/g, '')).join(', ')}]\n`;
+  md += `---\n\n`;
+
+  // 친근한 인트로 — 팩트 기반 (서비스명, 담당기관만 참조)
+  md += `## 🏡 ${city.ko}에 이런 혜택이 있다는 거, 알고 계셨나요?\n\n`;
+  md += `안녕하세요! 오늘은 **${city.ko}**에서 운영하는 공공서비스 **"${name}"** 을 소개해드릴게요. ${purpose ? purpose : '해당 지역 주민이라면 꼭 체크해볼 만한 제도예요.'}\n\n`;
+  md += `몰라서 놓치기 쉬운 혜택들, 하나하나 알아두면 실생활에 큰 도움이 된답니다. 아래 내용은 전부 **정부24 공식 데이터**를 바탕으로 정리한 내용이에요. ✍️\n\n`;
+
+  // 핵심 정보 박스
+  md += `## 📌 핵심 정보 한눈에 보기\n\n`;
+  const coreInfo = [];
+  if (agency) coreInfo.push(`- **담당 기관**: ${agency}${dept ? ` (${dept})` : ''}`);
+  if (serviceField) coreInfo.push(`- **서비스 분야**: ${serviceField}`);
+  if (supportType) coreInfo.push(`- **지원 유형**: ${supportType}`);
+  if (deadline) coreInfo.push(`- **신청 기한**: ${deadline}`);
+  if (receiveAgency) coreInfo.push(`- **접수 기관**: ${receiveAgency}`);
+  md += coreInfo.join('\n') + '\n\n';
+
+  // 지원 대상
+  if (target) {
+    md += `## 👥 누가 신청할 수 있나요?\n\n`;
+    md += formatAsList(target) + '\n\n';
+  }
+
+  // 지원 내용
+  if (content) {
+    md += `## 💰 어떤 지원을 받나요?\n\n`;
+    md += formatAsList(content) + '\n\n';
+  }
+
+  // 선정 기준
+  if (criteria && criteria !== target && criteria !== content) {
+    md += `## ✅ 선정 기준\n\n`;
+    md += formatAsList(criteria) + '\n\n';
+  }
+
+  // 신청 방법
+  if (method) {
+    md += `## 📝 어떻게 신청하나요?\n\n`;
+    md += formatAsList(method) + '\n\n';
+  }
+
+  // 추천 포인트 3가지 — 원본 데이터 필드에서만 도출 (팩트 기반)
+  md += `## ⭐ 이 제도, 이런 분들께 특히 유용해요\n\n`;
+  const points = [];
+
+  if (supportType && /현금/.test(supportType)) {
+    points.push(`**현금(감면) 지원**이에요. 바우처나 포인트가 아닌 **현금/감면 형태**라 실질적인 도움이 됩니다.`);
+  } else if (supportType) {
+    points.push(`**${supportType}** 형태로 지원됩니다. 원본 데이터에 명시된 지원 방식이에요.`);
+  }
+
+  if (deadline && /상시|수시|연중/.test(deadline)) {
+    points.push(`**상시 신청**이 가능해요. 특정 접수 기간에 얽매이지 않고 자격이 되면 언제든 신청할 수 있습니다.`);
+  } else if (deadline) {
+    points.push(`신청 기한은 **${deadline}** 입니다. 놓치지 않도록 일정을 미리 체크해 두세요.`);
+  }
+
+  if (agency) {
+    points.push(`**${agency}**에서 직접 운영하는 공식 제도예요. 공공데이터포털(정부24)에 등록된 신뢰할 수 있는 서비스입니다.`);
+  }
+
+  points.forEach((p, i) => {
+    md += `### ${i + 1}. ${p.split('.')[0]}.\n${p.split('.').slice(1).join('.').trim()}\n\n`;
+  });
+
+  // 문의 및 원문
+  md += `## ☎️ 문의 및 원문 확인\n\n`;
+  if (phone) {
+    md += `- **전화 문의**: ${phone}\n`;
+  }
+  if (sourceUrl) {
+    md += `- **정부24 공식 페이지**: [${name} 상세보기](${sourceUrl})\n`;
+  }
+  md += `\n`;
+  md += `공공서비스는 시기에 따라 내용이 변경될 수 있어요. 신청 전에 반드시 **위의 정부24 공식 페이지** 또는 **담당 기관 공식 공고**를 확인해 주세요! 🙏\n\n`;
+
+  md += `---\n\n`;
+  md += `> 📖 이 글은 공공데이터포털(정부24)에서 제공하는 **원본 데이터를 바탕으로 작성**되었습니다. 구체적인 금액·대상·조건·절차는 모두 공공데이터포털의 원본 필드를 그대로 인용했으며, 임의로 추측하거나 가공하지 않았습니다.\n`;
+
+  return { md, serviceId, city };
 }
 
 async function main() {
@@ -173,31 +191,26 @@ async function main() {
   console.log(`[seed] ${items.length}개 항목 처리 시작`);
 
   const today = new Date().toISOString().slice(0, 10);
-  let success = 0;
-  let failed = 0;
+  let success = 0, failed = 0;
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     const serviceId = String(item.id || '');
     if (!serviceId) {
-      console.warn(`[seed] ${i + 1}/${items.length} 서비스ID 없음, 스킵`);
+      console.warn(`[seed] ${i + 1}/${items.length} 서비스ID 없음`);
       failed++;
       continue;
     }
-
     try {
       const raw = await fetchById(serviceId);
       if (!raw) {
-        console.warn(`[seed] ${i + 1}/${items.length} ${item.name}: 원본 데이터 없음`);
+        console.warn(`[seed] ${i + 1}/${items.length} ${item.name}: 원본 없음`);
         failed++;
         continue;
       }
-
-      const { body } = generateMarkdown(raw, today);
-      const filename = buildFilename(today, raw, i);
-      const filepath = path.join(POSTS_DIR, filename);
-
-      fs.writeFileSync(filepath, body, 'utf-8');
+      const { md, city } = generateMarkdown(raw, today);
+      const filename = `${today}-${city.en}-${serviceId}.md`;
+      fs.writeFileSync(path.join(POSTS_DIR, filename), md, 'utf-8');
       console.log(`[seed] ${i + 1}/${items.length} ✓ ${filename}`);
       success++;
     } catch (err) {
