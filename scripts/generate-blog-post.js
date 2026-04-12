@@ -31,16 +31,48 @@ function loadLatestItem() {
   return all[all.length - 1];
 }
 
-function isAlreadyWritten(itemName) {
+/**
+ * item.location 에서 도시명을 추출해 영문 city slug 반환.
+ * page.tsx getBlogSlug 과 동일한 로직.
+ */
+function getCitySlug(location) {
+  const loc = location || '';
+  if (loc.includes('의정부')) return 'uijeongbu';
+  if (loc.includes('남양주')) return 'namyangju';
+  if (loc.includes('양주')) return 'yangju';
+  if (loc.includes('동두천')) return 'dongducheon';
+  if (loc.includes('포천')) return 'pocheon';
+  return 'gyeonggi';
+}
+
+/**
+ * 아이템의 서비스 ID 를 포함한 파일명을 빌드.
+ * 형식: {startDate}-{city}-{id}
+ * → page.tsx getBlogSlug 과 완전히 동일해야 함.
+ */
+function buildFilename(item) {
+  const idStr = String(item.id || Date.now());
+  const city = getCitySlug(item.location);
+  const date = item.startDate && item.startDate !== '-'
+    ? item.startDate
+    : new Date().toISOString().slice(0, 10);
+  return `${date}-${city}-${idStr}`;
+}
+
+function isAlreadyWritten(item) {
   if (!fs.existsSync(POSTS_DIR)) return false;
   const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith('.md'));
+
+  // 1) 파일명에 서비스 ID 가 포함되어 있으면 이미 작성됨
+  const idStr = String(item.id || '');
+  if (idStr && files.some((f) => f.includes(idStr))) {
+    return true;
+  }
+
+  // 2) 파일 내용에 서비스명이 포함되어 있으면 이미 작성됨
   for (const file of files) {
     const content = fs.readFileSync(path.join(POSTS_DIR, file), 'utf-8');
-    const match = content.match(/^title:\s*["']?(.*?)["']?\s*$/m);
-    const title = match ? match[1] : '';
-    if (content.includes(itemName) || title.includes(itemName)) {
-      return true;
-    }
+    if (content.includes(item.name)) return true;
   }
   return false;
 }
@@ -78,41 +110,6 @@ function stripCodeFence(text) {
   return cleaned.trim();
 }
 
-function splitResponse(text) {
-  const cleaned = stripCodeFence(text);
-
-  // FILENAME 라인 추출
-  const filenameMatch = cleaned.match(/FILENAME:\s*([^\n\r]+)/i);
-  if (!filenameMatch) {
-    throw new Error('Gemini 응답에서 FILENAME을 찾을 수 없습니다.');
-  }
-
-  let filename = filenameMatch[1].trim();
-  // 확장자 제거 후 .md 보장
-  filename = filename.replace(/\.md$/i, '');
-  // 파일명에 안전하지 않은 문자 제거
-  filename = filename.replace(/[^a-zA-Z0-9가-힣_\-]/g, '-').replace(/-+/g, '-');
-
-  // FILENAME 라인을 본문에서 제거
-  const body = cleaned.replace(/FILENAME:\s*[^\n\r]+/i, '').trim();
-
-  return { filename, body };
-}
-
-function ensureUniqueFilename(baseName) {
-  if (!fs.existsSync(POSTS_DIR)) {
-    fs.mkdirSync(POSTS_DIR, { recursive: true });
-  }
-
-  let candidate = `${baseName}.md`;
-  let counter = 2;
-  while (fs.existsSync(path.join(POSTS_DIR, candidate))) {
-    candidate = `${baseName}-${counter}.md`;
-    counter += 1;
-  }
-  return candidate;
-}
-
 async function main() {
   let latestItem;
   try {
@@ -129,8 +126,8 @@ async function main() {
 
   console.log(`[generate-blog-post] 최신 항목: ${latestItem.name}`);
 
-  if (isAlreadyWritten(latestItem.name)) {
-    console.log('이미 작성된 글입니다');
+  if (isAlreadyWritten(latestItem)) {
+    console.log('[generate-blog-post] 이미 작성된 글입니다. 건너뜁니다.');
     return;
   }
 
@@ -141,27 +138,29 @@ async function main() {
 [원본 정보]
 ${JSON.stringify(latestItem, null, 2)}
 
-⚠️ 매우 중요한 규칙 (반드시 준수):
-1. 이 글은 공공 정보이므로 사실(팩트)만 써야 해. 원본 정보에 없는 내용은 **절대 지어내지 마**.
-2. 구체적인 금액, 지원 대상, 신청 기간, 조건, 선정 기준, 신청 방법은 **원본 정보에 명시된 값만** 그대로 인용해.
-3. 원본에 없는 숫자(예: "최대 40만원", "150명 선발")나 구체 조건은 절대 쓰지 마.
-4. 원본에 없는 절차나 방법(예: "온라인 잡아바 신청", "5분 만에 완료")도 쓰지 마.
-5. 불확실한 부분은 "자세한 내용은 해당 기관에 문의하세요" 또는 "공식 공고를 확인하세요"로 넘겨.
-6. 친근한 톤은 OK, 하지만 그 톤 안에서도 팩트 범위를 절대 벗어나지 말 것.
-7. 추천 이유는 **원본 정보에서 추론 가능한 일반적 장점**만 써. (예: 대상이 청년이면 "청년 구직자의 부담 경감" 정도는 OK)
+⚠️ 반드시 지켜야 할 규칙:
+1. 공공 정보이므로 사실(팩트)만 써야 해. 원본에 없는 내용은 절대 지어내지 마.
+2. 구체적인 금액, 지원 대상, 신청 기간, 조건은 원본에 명시된 값만 인용해.
+3. 원본에 없는 숫자나 절차는 절대 추가하지 마.
+4. 불확실한 내용은 "자세한 내용은 담당 기관에 문의하세요"로 넘겨.
+5. 친근하고 자연스러운 블로그 문체로 써. 딱딱한 행정 문서 느낌 X.
+6. 제목(##), 소제목(###) 등 마크다운 헤더로 구조를 나눠줘.
+7. 글 길이는 반드시 1000자 이상으로 작성해.
+8. 마지막 줄에는 반드시 다음 문장을 그대로 넣어:
+   > 📖 이 글은 공공데이터포털(정부24)의 원본 데이터를 바탕으로 작성되었습니다.
 
-아래 형식으로 출력해줘. 반드시 이 형식만 출력하고 다른 텍스트는 없이:
+출력 형식 (아래 형식만 출력, 다른 텍스트 없이):
 ---
-title: (원본 서비스명을 살린 흥미로운 제목)
+title: "(서비스명을 살린 흥미로운 제목)"
 date: ${today}
-summary: (원본 summary를 기반으로 한 줄 요약)
+summary: "(원본 summary 기반 한 줄 요약)"
 category: 정보
 tags: [태그1, 태그2, 태그3]
 ---
 
-(본문: 원본 정보를 기반으로 친근한 톤으로 소개. 길이는 400~800자. 팩트만. 추측·과장 금지. 마지막에 "자세한 내용은 공식 공고나 담당 기관에 문의하세요" 안내 포함)
+(본문: 마크다운 형식, 1000자 이상, 팩트만, 블로그 문체)
 
-마지막 줄에 FILENAME: ${today}-keyword 형식으로 파일명도 출력해줘. 키워드는 영문으로.`;
+> 📖 이 글은 공공데이터포털(정부24)의 원본 데이터를 바탕으로 작성되었습니다.`;
 
   let responseText;
   try {
@@ -171,22 +170,27 @@ tags: [태그1, 태그2, 태그3]
     return;
   }
 
-  let filename, body;
-  try {
-    ({ filename, body } = splitResponse(responseText));
-  } catch (err) {
-    console.error('[generate-blog-post] 응답 파싱 실패:', err.message);
+  const body = stripCodeFence(responseText);
+
+  if (!body || body.length < 100) {
+    console.error('[generate-blog-post] 생성된 본문이 너무 짧습니다.');
     return;
   }
 
-  if (!body || body.length === 0) {
-    console.error('[generate-blog-post] 생성된 본문이 비어있습니다.');
-    return;
+  if (!fs.existsSync(POSTS_DIR)) {
+    fs.mkdirSync(POSTS_DIR, { recursive: true });
   }
 
-  const finalFilename = ensureUniqueFilename(filename);
+  // 파일명: {startDate}-{city}-{id}.md  ← page.tsx getBlogSlug 과 동일 패턴
+  const baseFilename = buildFilename(latestItem);
+  let finalFilename = `${baseFilename}.md`;
+  let counter = 2;
+  while (fs.existsSync(path.join(POSTS_DIR, finalFilename))) {
+    finalFilename = `${baseFilename}-${counter}.md`;
+    counter += 1;
+  }
+
   const finalPath = path.join(POSTS_DIR, finalFilename);
-
   try {
     fs.writeFileSync(finalPath, body + '\n', 'utf-8');
     console.log(`[generate-blog-post] 완료: ${finalFilename}`);

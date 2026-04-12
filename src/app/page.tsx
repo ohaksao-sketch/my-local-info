@@ -14,6 +14,19 @@ interface InfoItem {
   link: string;
 }
 
+function getBlogSlug(item: InfoItem): string {
+  const idStr = String(item.id);
+  const loc = item.location || '';
+  let city = 'unknown';
+  if (loc.includes('의정부')) city = 'uijeongbu';
+  else if (loc.includes('남양주')) city = 'namyangju';
+  else if (loc.includes('양주')) city = 'yangju';
+  else if (loc.includes('동두천')) city = 'dongducheon';
+  else if (loc.includes('포천')) city = 'pocheon';
+  const date = item.startDate && item.startDate !== '-' ? item.startDate : new Date().toISOString().slice(0, 10);
+  return `${date}-${city}-${idStr}`;
+}
+
 const InfoCard = ({ item }: { item: InfoItem }) => (
   <div className="bg-white rounded-2xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow duration-300">
     <div className="flex justify-between items-start mb-4">
@@ -39,7 +52,7 @@ const InfoCard = ({ item }: { item: InfoItem }) => (
       <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">{item.summary}</p>
     </div>
     <Link
-      href="/blog"
+      href={`/blog/${getBlogSlug(item)}`}
       className="inline-block text-orange-500 font-bold text-sm hover:underline"
     >
       자세히 보기 →
