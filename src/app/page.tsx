@@ -60,8 +60,13 @@ const InfoCard = ({ item }: { item: InfoItem }) => (
   </div>
 );
 
+function sortByDate<T extends { startDate: string }>(items: T[]): T[] {
+  return [...items].sort((a, b) => (a.startDate < b.startDate ? 1 : -1));
+}
+
 export default async function Home() {
-  const { events, benefits } = data;
+  const events = sortByDate(data.events);
+  const benefits = sortByDate(data.benefits);
 
   return (
     <div className="min-h-screen bg-orange-50 font-sans text-gray-900">
