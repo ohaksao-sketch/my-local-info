@@ -13,9 +13,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const BASE_URL = 'https://infotoday.co.kr';
+
 export const metadata: Metadata = {
-  title: "경기북부지원포탈",
-  description: "의정부·양주·동두천·포천 등 경기북부 지역의 최신 행사, 지원금, 혜택 정보를 한눈에 확인하고 AI가 작성한 블로그 글을 만나보세요.",
+  title: {
+    default: '경기북부지원포탈 | 의정부·양주·동두천·포천 지원금·혜택 안내',
+    template: '%s | 경기북부지원포탈',
+  },
+  description: '의정부·양주·동두천·포천 등 경기북부 주민을 위한 지역 행사, 축제, 지원금, 혜택 정보를 매일 업데이트합니다.',
+  metadataBase: new URL(BASE_URL),
+  alternates: { canonical: BASE_URL },
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    url: BASE_URL,
+    siteName: '경기북부지원포탈',
+    title: '경기북부지원포탈 | 의정부·양주·동두천·포천 지원금·혜택 안내',
+    description: '의정부·양주·동두천·포천 등 경기북부 주민을 위한 지역 행사, 축제, 지원금, 혜택 정보를 매일 업데이트합니다.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '경기북부지원포탈',
+    description: '경기북부 지역 지원금·혜택·행사 정보 포털',
+  },
 };
 
 export default function RootLayout({

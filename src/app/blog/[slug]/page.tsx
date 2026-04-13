@@ -3,10 +3,35 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import type { Metadata } from 'next';
 import { getAllPostSlugs, getPostBySlug } from '../../../lib/posts';
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
+  if (!post) return {};
+
+  const BASE_URL = 'https://infotoday.co.kr';
+  const url = `${BASE_URL}/blog/${slug}/`;
+
+  return {
+    title: post.title,
+    description: post.summary,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      url,
+      title: post.title,
+      description: post.summary,
+      publishedTime: post.date,
+      locale: 'ko_KR',
+      siteName: '경기북부지원포탈',
+    },
+  };
 }
 
 export async function generateStaticParams() {
