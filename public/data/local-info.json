@@ -341,6 +341,17 @@
       "target": "○ 소 15두 이상, 돼지 300두 이상, 닭10,000수 이상 농가",
       "summary": "축산농가에 미생물제 구입비 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000101"
+    },
+    {
+      "id": 392000000102,
+      "name": "완효성 비료보급 지원",
+      "category": "혜택",
+      "startDate": "2026-04-13",
+      "endDate": "상시",
+      "location": "경기도 동두천시",
+      "target": "동두천시 벼 재배 농업인",
+      "summary": "벼 재배 농업인에게 완효성 비료보급 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000102"
     }
   ]
 }
