@@ -15,6 +15,14 @@ const geistMono = Geist_Mono({
 
 const BASE_URL = 'https://infotoday.co.kr';
 
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: '경기북부지원포탈',
+  url: BASE_URL,
+  description: '의정부·양주·동두천·포천 등 경기북부 주민을 위한 지역 행사, 축제, 지원금, 혜택 정보',
+};
+
 export const metadata: Metadata = {
   title: {
     default: '경기북부지원포탈 | 의정부·양주·동두천·포천 지원금·혜택 안내',
@@ -48,6 +56,12 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-orange-50 font-sans text-gray-900">
         <nav className="bg-white border-b border-orange-100 sticky top-0 z-50">
           <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -57,6 +71,7 @@ export default function RootLayout({
             <div className="flex gap-6">
               <Link href="/" className="font-bold text-gray-600 hover:text-orange-500 transition-colors">홈</Link>
               <Link href="/blog" className="font-bold text-gray-600 hover:text-orange-500 transition-colors">블로그</Link>
+              <Link href="/about" className="font-bold text-gray-600 hover:text-orange-500 transition-colors">소개</Link>
             </div>
           </div>
         </nav>

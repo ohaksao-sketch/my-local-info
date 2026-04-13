@@ -68,7 +68,37 @@ export default async function Home() {
   const events = sortByDate(data.events);
   const benefits = sortByDate(data.benefits);
 
+  const eventSchemas = (events as InfoItem[]).map((item) => ({
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: item.name,
+    startDate: item.startDate,
+    endDate: item.endDate,
+    location: { '@type': 'Place', name: item.location },
+    description: item.summary,
+  }));
+
+  const serviceSchemas = (benefits as InfoItem[]).map((item) => ({
+    '@context': 'https://schema.org',
+    '@type': 'GovernmentService',
+    name: item.name,
+    description: item.summary,
+    provider: {
+      '@type': 'GovernmentOrganization',
+      name: item.location || '경기북부 지자체',
+    },
+  }));
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(eventSchemas) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchemas) }}
+      />
     <div className="min-h-screen bg-orange-50 font-sans text-gray-900">
       {/* 1. 상단 헤더 */}
       <header className="bg-white border-b border-orange-100 py-8 px-4 text-center sticky top-0 z-10 shadow-sm">
@@ -132,5 +162,6 @@ export default async function Home() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
