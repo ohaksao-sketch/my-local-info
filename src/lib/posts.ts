@@ -62,7 +62,10 @@ export function getAllPosts(): PostSummary[] {
     return { slug, ...toFrontmatter(data) };
   });
 
-  return posts.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return posts.sort((a, b) => {
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+    return a.slug < b.slug ? 1 : -1;
+  });
 }
 
 export function getPostBySlug(slug: string): Post | null {

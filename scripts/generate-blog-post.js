@@ -170,7 +170,10 @@ tags: [태그1, 태그2, 태그3]
     return;
   }
 
-  const body = stripCodeFence(responseText);
+  let body = stripCodeFence(responseText);
+
+  // Gemini가 item의 날짜를 쓸 수 있으므로 오늘 날짜로 강제 교체
+  body = body.replace(/^date:.*$/m, `date: ${today}`);
 
   if (!body || body.length < 100) {
     console.error('[generate-blog-post] 생성된 본문이 너무 짧습니다.');
