@@ -374,6 +374,17 @@
       "target": "동두천시정신건강복지센터장이 추천한 자",
       "summary": "저소득 정신질환자에게 가정병상지원비 및 자립촉진비 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000104"
+    },
+    {
+      "id": 392000000105,
+      "name": "청년 합격지원세트 지원",
+      "category": "혜택",
+      "startDate": "2026-04-16",
+      "endDate": "상시",
+      "location": "경기도 동두천시",
+      "target": "동두천 거주 만19세~만39세 청년",
+      "summary": "청년에게 면접정장 구입 및 대여, 이력서 사진촬영, 헤어메이크업, 수강료 등 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000105"
     }
   ]
 }
