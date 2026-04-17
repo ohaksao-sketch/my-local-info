@@ -385,6 +385,17 @@
       "target": "동두천 거주 만19세~만39세 청년",
       "summary": "청년에게 면접정장 구입 및 대여, 이력서 사진촬영, 헤어메이크업, 수강료 등 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000105"
+    },
+    {
+      "id": 392000000107,
+      "name": "여성장애인 출산지원금 및 양육비 지원",
+      "category": "혜택",
+      "startDate": "2026-04-17",
+      "endDate": "상시",
+      "location": "경기도 동두천시",
+      "target": "출산한 등록여성장애인",
+      "summary": "출산 여성장애인에게 출산지원금 및 양육비 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000107"
     }
   ]
 }
