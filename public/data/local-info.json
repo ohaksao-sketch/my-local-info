@@ -396,6 +396,17 @@
       "target": "출산한 등록여성장애인",
       "summary": "출산 여성장애인에게 출산지원금 및 양육비 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000107"
+    },
+    {
+      "id": 392000000109,
+      "name": "출산 및 돌 축하용품 지원",
+      "category": "혜택",
+      "startDate": "2026-04-18",
+      "endDate": "상시",
+      "location": "경기도 동두천시",
+      "target": "○ 출산 축하용품 : 동두천시에 출생신고 가구 대상 신생아별 지원\r\n\r\n○ 돌 축하용품 : 동두천시에 출생신고를 하고 돌까지 거주한 가구 대상 영아별 지원",
+      "summary": "출산가구에 출산 축하용품과 돌 축하용품 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000109"
     }
   ]
 }
