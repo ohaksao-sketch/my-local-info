@@ -407,6 +407,17 @@
       "target": "○ 출산 축하용품 : 동두천시에 출생신고 가구 대상 신생아별 지원\r\n\r\n○ 돌 축하용품 : 동두천시에 출생신고를 하고 돌까지 거주한 가구 대상 영아별 지원",
       "summary": "출산가구에 출산 축하용품과 돌 축하용품 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000109"
+    },
+    {
+      "id": 392000000110,
+      "name": "다문화가족 모국방문 지원",
+      "category": "혜택",
+      "startDate": "2026-04-19",
+      "endDate": "2025-06-30",
+      "location": "경기도 동두천시",
+      "target": "3년 이상 동두천시 거주, 3년 이상 모국을 방문하지 못한 결혼이민자 가정",
+      "summary": "다문화가족에게 모국방문 소요 경비 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000110"
     }
   ]
 }
