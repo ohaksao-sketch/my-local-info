@@ -418,6 +418,17 @@
       "target": "3년 이상 동두천시 거주, 3년 이상 모국을 방문하지 못한 결혼이민자 가정",
       "summary": "다문화가족에게 모국방문 소요 경비 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000110"
+    },
+    {
+      "id": 392000000111,
+      "name": "동두천시 초등학생 입학축하금 지원",
+      "category": "혜택",
+      "startDate": "2026-03-03",
+      "endDate": "2026-09-02",
+      "location": "경기도 동두천시",
+      "target": "입학일을 기준으로 동두천시에 주소를 두고 있는 초등학교 신입생",
+      "summary": "초등학교 신입생에게 입학 축하금 10만원 지급",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000111"
     }
   ]
 }
