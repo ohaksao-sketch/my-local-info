@@ -440,6 +440,17 @@
       "target": "동두천시에 계속하여 1개월 이상 주민등록 되어 있는 국가보훈대상자 및 그 유족 또는 배우자",
       "summary": "국가보훈대상자 등을 위해 명예수당, 사망위로금 등 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000112"
+    },
+    {
+      "id": "392000000113",
+      "name": "축산농가 톱밥 지원",
+      "category": "혜택",
+      "startDate": "2026-04-22",
+      "endDate": "상시",
+      "location": "경기도 동두천시",
+      "target": "소, 닭, 돼지 사육농가",
+      "summary": "축산농가에 수분조절제(톱밥) 구입비 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000113"
     }
   ]
 }
