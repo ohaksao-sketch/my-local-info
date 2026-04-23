@@ -451,6 +451,17 @@
       "target": "소, 닭, 돼지 사육농가",
       "summary": "축산농가에 수분조절제(톱밥) 구입비 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000113"
+    },
+    {
+      "id": 392000000115,
+      "name": "동두천사랑카드 구매할인 혜택 비용 지원",
+      "category": "혜택",
+      "startDate": "2026-04-23",
+      "endDate": "상시",
+      "location": "경기도 동두천시",
+      "target": "만 14세 이상이면 누구든지 발급 가능",
+      "summary": "만 14세 이상 누구나 동두천사랑카드 구입 시 할인 등 혜택 제공",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000115"
     }
   ]
 }
