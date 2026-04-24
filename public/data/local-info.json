@@ -462,6 +462,17 @@
       "target": "만 14세 이상이면 누구든지 발급 가능",
       "summary": "만 14세 이상 누구나 동두천사랑카드 구입 시 할인 등 혜택 제공",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000115"
+    },
+    {
+      "id": 392000000116,
+      "name": "장애인 보장구 수리비 지원",
+      "category": "혜택",
+      "startDate": "2026-04-24",
+      "endDate": "상시",
+      "location": "경기도 동두천시",
+      "target": "동두천시 거주 등록 장애인",
+      "summary": "장애인에게 보장구 수리 및 소모품 교체 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000116"
     }
   ]
 }
