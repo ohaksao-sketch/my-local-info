@@ -528,6 +528,17 @@
       "target": "동두천시에 거주하거나 활동(재직, 재학, 사업장 등)하는 청년 5인 이상 동아리",
       "summary": "동두천시에 거주하거나 활동(재직, 재학, 사업장 등)하는 청년 5인 모임에 활동비 지급",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000166"
+    },
+    {
+      "id": 560000000102,
+      "name": "성인장애인을 위한 심리 지원",
+      "category": "혜택",
+      "startDate": "2026-04-30",
+      "endDate": "상시",
+      "location": "경기도 포천시",
+      "target": "○ 포천시 거주 성인장애인(지적, 자폐)",
+      "summary": "성인장애인 심리 불안정 등 문제행동 조기발견 치료하기 위해 재활서비스 제공",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000102"
     }
   ]
 }
