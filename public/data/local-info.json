@@ -539,6 +539,17 @@
       "target": "○ 포천시 거주 성인장애인(지적, 자폐)",
       "summary": "성인장애인 심리 불안정 등 문제행동 조기발견 치료하기 위해 재활서비스 제공",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000102"
+    },
+    {
+      "id": 560000000103,
+      "name": "중증장애인 활동 지원",
+      "category": "혜택",
+      "startDate": "2026-05-01",
+      "endDate": "상시",
+      "location": "경기도 포천시",
+      "target": "만 6세~만 65세 미만 등록 장애인 중 보건복지부 및 경기도 추가급여 대상자",
+      "summary": "장애인에게 활동지원서비스 추가 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000103"
     }
   ]
 }
