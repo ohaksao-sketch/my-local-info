@@ -550,6 +550,17 @@
       "target": "만 6세~만 65세 미만 등록 장애인 중 보건복지부 및 경기도 추가급여 대상자",
       "summary": "장애인에게 활동지원서비스 추가 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000103"
+    },
+    {
+      "id": "560000000105",
+      "name": "장수수당",
+      "category": "혜택",
+      "startDate": "2026-05-02",
+      "endDate": "상시",
+      "location": "경기도 포천시",
+      "target": "○ 포천시 장수수당 조례 제4조에 의거하여 관내에 주민등록을 두고 거주하는 1943년 12월 31일 이전에 출생한 노인",
+      "summary": "포천시 주민등록을 둔 1943년 12월 31일 이전 출생한 노인에게 장수수당 지급",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000105"
     }
   ]
 }
