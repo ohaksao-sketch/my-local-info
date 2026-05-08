@@ -616,6 +616,17 @@
       "target": "○ 관내 수도작재배 농업경영체",
       "summary": "수도작 재배 농업경영체에 예비못자리설치 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000110"
+    },
+    {
+      "id": 560000000112,
+      "name": "저소득층 쓰레기봉투 무상 지급",
+      "category": "혜택",
+      "startDate": "2026-05-08",
+      "endDate": "상시",
+      "location": "경기도 포천시",
+      "target": "○ 수급자(생계·의료급여) 저소득 모·부자 가정",
+      "summary": "저소득층에게 쓰레기 종량제봉투 무상지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000112"
     }
   ]
 }
