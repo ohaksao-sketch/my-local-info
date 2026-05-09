@@ -627,6 +627,17 @@
       "target": "○ 수급자(생계·의료급여) 저소득 모·부자 가정",
       "summary": "저소득층에게 쓰레기 종량제봉투 무상지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000112"
+    },
+    {
+      "id": 560000000113,
+      "name": "포천 청년 면접정장 대여(키움옷장)",
+      "category": "혜택",
+      "startDate": "2025-01-10",
+      "endDate": "2025-12-12",
+      "location": "경기도 포천시",
+      "target": "○ 신청일 현재 포천시에 주민등록을 두고 있는 19세 이상~49세 이하 청년 구직자",
+      "summary": "구직청년에게 면접용 정장 무료 대여 서비스 제공",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000113"
     }
   ]
 }
