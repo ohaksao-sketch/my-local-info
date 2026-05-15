@@ -693,6 +693,17 @@
       "target": "포천시 소재 단독주택의 소유자, 한국에너지공단의 「신재생에너지보급(주택지원)사업」 선정 기준에 적합한 자",
       "summary": "단독주택 소유자 등에게 태양광 설비(3kW) 설치비 일부 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000125"
+    },
+    {
+      "id": 560000000126,
+      "name": "명절 이웃돕기 지원",
+      "category": "혜택",
+      "startDate": "2026-05-15",
+      "endDate": "상시",
+      "location": "경기도 포천시",
+      "target": "○ 관내 거주하는 기초생활보장 생계 또는 의료급여 일반수급자",
+      "summary": "기초생활보장(생계 또는 의료급여 일반수급자) 가구에 명절에 위문금품 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/560000000126"
     }
   ]
 }
