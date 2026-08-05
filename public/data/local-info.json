@@ -803,6 +803,17 @@
       "target": "동두천시 난임부부 시술비 지원사업 대상자 중 해당 지원 회차의 정부 지원금 잔액이 남은 자",
       "summary": "동두천시 난임부부 시술비 지원 신청자 중 정부지원금 잔액 발생시 원외약제비 온라인 청구",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/392000000169"
+    },
+    {
+      "id": "382000000190",
+      "name": "양봉산업 현대화지원사업",
+      "category": "혜택",
+      "startDate": "2026-08-05",
+      "endDate": "상시",
+      "location": "경기도 의정부시 도시농업과",
+      "target": "관내 「양봉산업법」에 따른 등록 농가",
+      "summary": "양봉농가 육성을 위한 자재지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/382000000190"
     }
   ]
 }
