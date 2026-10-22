@@ -836,6 +836,17 @@
       "target": "신청일 현재 남양주시에 거주하는 북한이탈주민 및 가정*\n\n   *가정 : 주민등록법상 남양주시에 함께 거주하는 배우자 및 직계존비속에 한함",
       "summary": "정착 물품 구입비 지원 및 병원진료비 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/399000000396"
+    },
+    {
+      "id": 399000000116,
+      "name": "국가보훈대상자 명절위문 수당",
+      "category": "혜택",
+      "startDate": "2026-10-22",
+      "endDate": "상시",
+      "location": "경기도 남양주시",
+      "target": "국가보훈대상자",
+      "summary": "국가보훈대상자 명절 위문수당 지원",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/399000000116"
     }
   ]
 }
