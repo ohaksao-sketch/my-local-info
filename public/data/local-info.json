@@ -847,6 +847,17 @@
       "target": "국가보훈대상자",
       "summary": "국가보훈대상자 명절 위문수당 지원",
       "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/399000000116"
+    },
+    {
+      "id": "382000000173",
+      "name": "강남구청 인터넷수능방송 온라인 학습 수강권 지원",
+      "category": "혜택",
+      "startDate": "2026-10-27",
+      "endDate": "상시",
+      "location": "경기도 의정부시",
+      "target": "○ 의정부시에 주민등록이 되어 있는 14~19세 청소년\r\n  - 의정부시 거주 여부 및 나이 확인\r\n  - 우선지원대상자의 경우 대상자 여부 확인",
+      "summary": "강남구청 인터넷수능방송 1년 수강권(정회원 혜택) ",
+      "link": "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/382000000173"
     }
   ]
 }
